@@ -49,6 +49,7 @@ ALLOWED_HOSTS = ["https://kea-backend.onrender.com", "localhost", "127.0.0.1"]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+CORS_ALLOW_ALL_ORIGINS = True  # or specify with CORS_ALLOWED_ORIGINS
 
 
 # Application definition
@@ -60,7 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+    'corsheaders',
     'masterdata',
     'member',
     'rest_framework',  # Add Django REST Framework
@@ -79,6 +80,7 @@ MIDDLEWARE = [
     'users.middleware.CheckMembershipMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 
