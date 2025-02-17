@@ -32,7 +32,7 @@ SIMPLE_JWT = {
 }
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 import os
@@ -42,7 +42,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", SECRET_KEY)
 
 # DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["keaa_backend.onrender.com", "localhost"]
+ALLOWED_HOSTS = ["keaa_backend.onrender.com", "localhost", "127.0.0.1"]
+
 
 
 
