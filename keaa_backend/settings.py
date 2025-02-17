@@ -32,7 +32,7 @@ SIMPLE_JWT = {
 }
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 import os
@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'member',
     'rest_framework',  # Add Django REST Framework
     'users',  # Add your custom user app
+    'drf_yasg',
 ]
 
 
