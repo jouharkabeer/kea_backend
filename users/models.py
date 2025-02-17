@@ -52,3 +52,8 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.phone_number
+    
+    def activate_membership(self):
+        self.is_active = True
+        self.save()
+

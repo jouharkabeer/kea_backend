@@ -3,8 +3,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import UserRegistrationSerializer
 from .models import CustomUser
+from rest_framework.permissions import AllowAny
 
 class UserRegistrationView(APIView):
+    permission_classes = [] 
+    authentication_classes = []
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
@@ -14,6 +17,8 @@ class UserRegistrationView(APIView):
 
 
 class ActivateMemberView(APIView):
+    permission_classes = [] 
+    authentication_classes = []
     def post(self, request):
         user_id = request.data.get("user_id")
         try:
@@ -37,6 +42,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class OTPVerifyView(APIView):
+    permission_classes = [] 
+    authentication_classes = []
     def post(self, request):
         phone_number = request.data.get("phone_number")
         otp = request.data.get("otp")
@@ -49,6 +56,8 @@ class OTPVerifyView(APIView):
 
 
 class OTPLoginView(APIView):
+    permission_classes = [] 
+    authentication_classes = []
     def post(self, request):
         phone_number = request.data.get("phone_number")
         print(phone_number)
@@ -61,6 +70,8 @@ class OTPLoginView(APIView):
 
 
 class PasswordLoginView(APIView):
+    permission_classes = [] 
+    authentication_classes = []
     def post(self, request):
         phone_number = request.data.get("phone_number")  # Change from username to phone_number
         password = request.data.get("password")
