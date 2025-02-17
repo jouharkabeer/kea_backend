@@ -11,7 +11,7 @@ class Testimonial(models.Model):
     rating = models.FloatField(validators=[MinValueValidator(0), MaxValueValidator(5)])
     title = models.CharField(max_length=20)
     testimonial = models.TextField(validators=[MinLengthValidator(15)], max_length=1000)
-    created_by = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
     def __str__(self):
