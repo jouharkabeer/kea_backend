@@ -43,7 +43,7 @@ class CustomUser(AbstractUser):
     address = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=False)  # Only activate after payment for members
     is_staff = models.BooleanField(default=False)  # Required for Django admin panel
-
+    membership_expiry = models.DateTimeField(blank=True, null=True)
     username = None  # Remove the username field
     USERNAME_FIELD = 'phone_number'  # Login with phone number instead of username
     REQUIRED_FIELDS = ['email', 'user_type']
@@ -54,6 +54,16 @@ class CustomUser(AbstractUser):
         return self.phone_number
     
     def activate_membership(self):
+        self.membership_expiry = now() + timedelta(days=365)
         self.is_active = True
         self.save()
+    
+    def membership_is_valid(self):
+        if self.membership_expiry == None or self.membership_expiry > now():
+            pass
+        else:
+            self.is_active = False
+        # if self.membership_expiry and self.membership_expiry <= now():
+        #     self.is_active = False
+        #     self.save()
 

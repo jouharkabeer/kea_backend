@@ -34,6 +34,8 @@ SIMPLE_JWT = {
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+from config import firebase  # Import Firebase setup
+
 
 import os
 

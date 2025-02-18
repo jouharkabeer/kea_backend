@@ -12,6 +12,8 @@ class UserRegistrationView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            if user.user_type:
+                print(user.user_type, user.is_active)
             return Response({"message": "User registered successfully!", "user_id": user.user_id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -41,32 +43,53 @@ from .models import CustomUser
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
-class OTPVerifyView(APIView):
-    permission_classes = [] 
-    authentication_classes = []
-    def post(self, request):
-        phone_number = request.data.get("phone_number")
-        otp = request.data.get("otp")
-        if verify_otp(phone_number, otp):
-            user = CustomUser.objects.get(phone_number=phone_number)
-            refresh = RefreshToken.for_user(user)
-            return Response({"access": str(refresh.access_token)}, status=status.HTTP_200_OK)
-        return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+import firebase_admin
+from firebase_admin import auth
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from django.contrib.auth import get_user_model
 
-
+CustomUser = get_user_model()
 
 class OTPLoginView(APIView):
     permission_classes = [] 
     authentication_classes = []
+
     def post(self, request):
         phone_number = request.data.get("phone_number")
-        print(phone_number)
+
         try:
+            # Check if user exists
             user = CustomUser.objects.get(phone_number=phone_number)
-            otp = send_otp(phone_number)
-            return Response({"message": "OTP sent!", "otp": otp}, status=status.HTTP_200_OK)  # Remove otp field in production
+
+            # Firebase Phone Authentication: Send OTP
+            link = auth.generate_sign_in_with_email_link(email=phone_number)  # Firebase sends an OTP to phone_number
+            return Response({"message": "OTP sent!", "link": link}, status=status.HTTP_200_OK)
+
         except CustomUser.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class OTPVerifyView(APIView):
+    permission_classes = [] 
+    authentication_classes = []
+
+    def post(self, request):
+        phone_number = request.data.get("phone_number")
+        otp = request.data.get("otp")
+        
+        try:
+            # Verify Firebase OTP
+            decoded_token = auth.verify_id_token(otp)  # OTP is actually the ID token in Firebase
+            
+            if decoded_token and decoded_token.get("phone_number") == phone_number:
+                user, created = CustomUser.objects.get_or_create(phone_number=phone_number)
+                refresh = RefreshToken.for_user(user)
+                return Response({"access": str(refresh.access_token)}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PasswordLoginView(APIView):
@@ -77,12 +100,12 @@ class PasswordLoginView(APIView):
         password = request.data.get("password")
         
         user = authenticate(username=phone_number, password=password)
-        
         if user:
+            user.membership_is_valid()
             if user.is_active:
                 refresh = RefreshToken.for_user(user)
                 return Response({"access": str(refresh.access_token)}, status=status.HTTP_200_OK)
-            return Response({"error": "You need a subsription"})
+            return Response({"error": "You need a subsription","user_id": user.user_id})
 
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
