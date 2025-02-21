@@ -34,10 +34,14 @@ SIMPLE_JWT = {
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-from config import firebase  # Import Firebase setup
-
-
 import os
+
+
+import firebase_admin
+from firebase_admin import credentials
+
+cred = credentials.Certificate("users/keabackend-firebase-adminsdk-fbsvc-fa14689b0b.json")
+firebase_admin.initialize_app(cred)
 
 
 SECRET_KEY = os.getenv("SECRET_KEY", SECRET_KEY)

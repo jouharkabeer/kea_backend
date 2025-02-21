@@ -2,7 +2,7 @@ import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.timezone import now, timedelta
-
+from django.core.validators import MaxValueValidator
 import uuid
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
@@ -47,6 +47,9 @@ class CustomUser(AbstractUser):
     username = None  # Remove the username field
     USERNAME_FIELD = 'phone_number'  # Login with phone number instead of username
     REQUIRED_FIELDS = ['email', 'user_type']
+    otp = models.IntegerField(MaxValueValidator(9999), null=True, blank=True)
+    otp_tries = models.IntegerField(null=True, blank=True, default=0)
+    otp_expiry = models.DateTimeField(null=True, blank=True)
 
     objects = CustomUserManager()  # Use the custom user manager
 
