@@ -16,3 +16,21 @@ class Testimonial(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.rating} Stars"
+    
+
+class Event(models.Model):
+    event_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, related_name="events")
+    event_name = models.CharField(max_length=100)  # Changed from ForeignKey to CharField
+    event_sub_name = models.CharField(max_length=30)
+    description = models.TextField()  # Changed from EmailField to TextField
+    location = models.CharField(max_length=255)  # Changed from FloatField to CharField
+    fee_for_member = models.DecimalField(max_digits=10, decimal_places=2)  # Changed to DecimalField
+    fee_for_external = models.DecimalField(max_digits=10, decimal_places=2)  # Changed to DecimalField
+    registration_ends = models.DateTimeField()
+    event_time = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.event_name} - {self.event_sub_name}"
