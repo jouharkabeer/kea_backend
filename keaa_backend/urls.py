@@ -25,10 +25,10 @@ from django.urls import path, include
 # Define the schema view
 schema_view = get_schema_view(
    openapi.Info(
-      title="My API",
+      title="KEA API's",
       default_version='v1',
       description="A comprehensive list of available API endpoints",
-      contact=openapi.Contact(email="contact@myapi.com"),
+      contact=openapi.Contact(email="jouharkabeer412@gmail.com"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
